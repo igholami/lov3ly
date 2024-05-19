@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django,jetbrains+all,pycharm+all,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,jetbrains+all,pycharm+all,python
 
+### Project ###
+lovely/prod_settings.py
+
 ### Django ###
 *.log
 *.pot

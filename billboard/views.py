@@ -73,7 +73,7 @@ def complete_registration(request):
         verified_registration = verify_registration_response(
             credential=registration_credentials,
             expected_challenge=base64url_to_bytes(webauthn_registration.challenge),
-            expected_origin=f"http://{request.get_host()}",  # dont forget the ports
+            expected_origin=f"https://{request.get_host()}",  # dont forget the ports
             expected_rp_id=get_domain(request),
         )
 
@@ -141,7 +141,7 @@ def complete_login(request):
         credential=authentication_credential,
         expected_challenge=base64url_to_bytes(webauthn_authentication.challenge),
         expected_rp_id=request.get_host(),
-        expected_origin=f"http://{request.get_host()}",
+        expected_origin=f"https://{request.get_host()}",
         credential_public_key=base64url_to_bytes(
             webauthn_credentials.credential_public_key
         ),

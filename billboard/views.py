@@ -108,7 +108,7 @@ def login(request, user):
     ]
     authentication_options = generate_authentication_options(
         rp_id=get_domain(request),
-        allow_credentials=allowed_credentials,
+        # allow_credentials=allowed_credentials,
     )
     json_option = json.loads(options_to_json(authentication_options))
     webauthn_authentication.challenge = json_option.get("challenge")

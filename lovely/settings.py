@@ -131,6 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Webauthn settings
 WEBAUTHN_RP_NAME = "Lov3ly"
+WEBAUTHN_METHOD = "http"
 
 if os.getenv("PRODUCTION") == "True":
     from .prod_settings import *

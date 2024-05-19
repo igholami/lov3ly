@@ -12,6 +12,7 @@ from webauthn import (
     base64url_to_bytes,
 
 )
+from webauthn.helpers.bytes_to_base64url import bytes_to_base64url
 from webauthn.helpers.exceptions import InvalidRegistrationResponse
 from webauthn.helpers.parse_authentication_credential_json import parse_authentication_credential_json
 from webauthn.helpers.parse_registration_credential_json import parse_registration_credential_json
@@ -66,22 +67,21 @@ def complete_registration(request):
     webauthn_registration = WebauthnRegistration.objects.get(user=user)
 
     del data[("email")]
-    print(data)
     registration_credentials = parse_registration_credential_json(data)
 
     try:
         verified_registration = verify_registration_response(
             credential=registration_credentials,
             expected_challenge=base64url_to_bytes(webauthn_registration.challenge),
-            expected_origin=f"https://{request.get_host()}",  # dont forget the ports
+            expected_origin=f"{settings.WEBAUTHN_METHOD}://{request.get_host()}",  # dont forget the ports
             expected_rp_id=get_domain(request),
         )
 
         WebauthnCredentials.objects.create(
             user=user,
             name=user.email,
-            credential_public_key=verified_registration.credential_public_key,
-            credential_id=verified_registration.credential_id,
+            credential_public_key=bytes_to_base64url(verified_registration.credential_public_key),
+            credential_id=bytes_to_base64url(verified_registration.credential_id),
         )
 
         auth.login(request, user)
@@ -108,7 +108,7 @@ def login(request, user):
     ]
     authentication_options = generate_authentication_options(
         rp_id=get_domain(request),
-        # allow_credentials=allowed_credentials,
+        allow_credentials=allowed_credentials,
     )
     json_option = json.loads(options_to_json(authentication_options))
     webauthn_authentication.challenge = json_option.get("challenge")
@@ -125,7 +125,6 @@ def login(request, user):
 @require_POST
 def complete_login(request):
     data = json.loads(request.body)
-    print(data)
     user = get_object_or_404(User, email=data["email"])
     webauthn_authentication = WebauthnAuthentication.objects.get(user=user)
 
@@ -140,8 +139,8 @@ def complete_login(request):
     authentication_verification = verify_authentication_response(
         credential=authentication_credential,
         expected_challenge=base64url_to_bytes(webauthn_authentication.challenge),
-        expected_rp_id=request.get_host(),
-        expected_origin=f"https://{request.get_host()}",
+        expected_rp_id=get_domain(request),
+        expected_origin=f"{settings.WEBAUTHN_METHOD}://{request.get_host()}",
         credential_public_key=base64url_to_bytes(
             webauthn_credentials.credential_public_key
         ),
@@ -150,7 +149,7 @@ def complete_login(request):
     webauthn_credentials.current_sign_count = (
         authentication_verification.new_sign_count
     )
-    login(request, user)
+    auth.login(request, user)
     return HttpResponse(status=200)
 
 def home(request):

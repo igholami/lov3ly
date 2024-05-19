@@ -1,0 +1,47 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Django App{% endblock %}</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #001f3f; /* Dark Navy Blue */
+            color: #00b894; /* Slight green */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .my-header {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            position: absolute;
+            top: 20px;
+            width: 100%;
+        }
+        .my-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 30%;
+        }
+    </style>
+</head>
+<body>
+    <div class="my-header">lov3ly</div>
+        {% block content %}
+        {% endblock %}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        {% block js %}
+        {% endblock %}
+</body>
+</html>

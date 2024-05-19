@@ -1,0 +1,88 @@
+{#{% extends 'base.html' %}#}
+{% load static %}
+{% block title %}Webauthn register{% endblock %}
+{% block page-title %}
+ Register
+{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+
+                <p>register:</p>
+            <div class="row">
+                <div class="col">
+                <button class="offset-4 center btn btn-success" id="btnBegin">register</button>
+                </div>
+            </div>
+        <div id="success"></div>
+
+            <div class="mt-3 text-danger" id="error"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    {% autoescape off %}
+    <script src="{% static 'js/simplewebauthn.umd.min.js' %}"></script>
+    <script>
+  const { startRegistration } = SimpleWebAuthnBrowser;
+
+  // <button>
+  const elemBegin = document.getElementById('btnBegin');
+  // <span>/<p>/etc...
+  const elemSuccess = document.getElementById('success');
+  // <span>/<p>/etc...
+  const elemError = document.getElementById('error');
+
+  // Start registration when the user clicks a button
+  elemBegin.addEventListener('click', async () => {
+    // Reset success/error messages
+
+
+    // GET registration options from the endpoint that calls
+    // @simplewebauthn/server -> generateRegistrationOptions()
+    const resp = {{public_credential_creation_options|safe }};
+
+    let attResp;
+    try {
+      // Pass the options to the authenticator and wait for a response
+      attResp = await startRegistration(resp);
+      attResp.email = "{{email}}";
+    } catch (error) {
+      // Some basic error handling
+      if (error.name === 'InvalidStateError') {
+        elemError.innerText = 'Error';
+      } else {
+        elemError.innerText ='Error: '+ error;
+      }
+
+      throw error;
+    }
+
+    // POST the response to the endpoint that calls
+    // @simplewebauthn/server -> verifyRegistrationResponse()
+
+
+    const verificationResp = await fetch("{% url 'complete_registration' %}", {
+      method: 'POST',
+      headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+      body:  JSON.stringify(attResp),
+    });
+
+    // Wait for the results of verification
+    const verificationJSON = await verificationResp;
+
+    // Show UI appropriate for the `verified` status
+    if (verificationJSON.status === 201) {
+      window.location.replace("/")
+    } else {
+      location.reload()
+    }
+  });
+</script>
+    {% endautoescape %}
+{% endblock %}

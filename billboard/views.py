@@ -174,58 +174,6 @@ def authenticate(request):
     user = user[0]
     return login(request, user)
 
-def webauthn_register(request):
-    if request.method == "GET":
-        public_credential_creation_options = generate_registration_options(
-            rp_id=request.get_host(),  # On dev make sure that you have the ports here
-            rp_name="Your Awesome name",
-            user_id=str(request.user.pk),  # Must be a string
-            user_name=request.user.username,
-        )
-
-        webauthn_registration, _ = WebauthnRegistration.objects.get_or_create(
-            user=request.user
-        )
-
-        # The options are encoded in bytes - to save them correctly
-        # I use the json strings
-        options_dict = json.loads(options_to_json(public_credential_creation_options))
-        webauthn_registration.challenge = options_dict["challenge"]
-        webauthn_registration.save()
-
-        return render(
-            request,
-            "mfa/register_token.html",
-            context={
-                "public_credential_creation_options": options_to_json(
-                    public_credential_creation_options
-                )
-            },
-        )
-    if request.method == "POST":
-        webauthn_registration = WebauthnRegistration.objects.get(user=request.user)
-
-        registration_credentials = RegistrationCredential.parse_raw(request.body)
-
-        try:
-            authentication_verification = verify_registration_response(
-                credential=registration_credentials,
-                expected_challenge=base64url_to_bytes(webauthn_registration.challenge),
-                expected_origin=f"https://{request.get_host()}",  # dont forget the ports
-                expected_rp_id=request.get_host(),
-            )
-
-            auth_json = json.loads(authentication_verification.json())
-            WebauthnCredentials.objects.create(
-                user=request.user,
-                credential_public_key=auth_json.get("credential_public_key"),
-                credential_id=auth_json.get("credential_id"),
-            )
-
-            return HttpResponse(status=201)
-        except InvalidRegistrationResponse as error:
-            messages.error(
-                request,
-                f"Something went wrong: {error}",
-            )
-            return redirect("mfa:register")
+def logout(request):
+    auth.logout(request)
+    return redirect("index")

@@ -8,7 +8,7 @@ deploy.sh
 config_files
 
 ### Django ###
-static/
+/static/
 *.log
 *.pot
 *.pyc

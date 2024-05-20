@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'billboard.apps.BillboardConfig',
+    'fingerprint.apps.FingerprintConfig',
 ]
 
 MIDDLEWARE = [
@@ -121,7 +122,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_DIRS = [
-    BASE_DIR / 'billboard/static'
+    BASE_DIR / 'fingerprint/static'
 ]
 
 # Default primary key field type

@@ -1,0 +1,18 @@
+<!-- templates/register.html -->
+
+{% extends "base.html" %}
+
+{% block title %}Authenticate{% endblock %}
+
+{% block content %}
+    <div class="my-container">
+        <h2 class="text-center text-white">Home</h2>
+        {% if not user.participation or not user.participation.relationship %}
+            <p class="text-center text-white">You are not in a relationship.</p>
+        {% else %}
+            <p class="text-center text-white">You are in a relationship</p>
+        {% endif %}
+
+
+    </div>
+{% endblock %}

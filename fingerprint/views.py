@@ -92,7 +92,7 @@ def complete_registration(request):
             request,
             f"Something went wrong: {error}",
         )
-        return redirect("index")
+        return redirect("fingerprint")
 
 
 def login(request, user):
@@ -175,4 +175,4 @@ def authenticate(request):
 
 def logout(request):
     auth.logout(request)
-    return redirect("index")
+    return redirect("fingerprint")

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
+from billboard.models import Relationship
+
 
 # Create your views here.
 
@@ -8,7 +10,7 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect('fingerprint')
     user = request.user
-    in_relationship = user.participation and user.participation.relationship
+    in_relationship = Relationship.objects.filter(participants__user=user).exists()
     relationship, partners = None, None
     admitted = False
     if in_relationship:

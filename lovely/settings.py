@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'US/Eastern'
 
 USE_I18N = True
 
@@ -135,6 +135,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Webauthn settings
 WEBAUTHN_RP_NAME = "Lov3ly"
 WEBAUTHN_METHOD = "http"
+
+# Online threshold
+ONLINE_THRESHOLD_MINUTES = 100
 
 if os.getenv("PRODUCTION") == "True":
     from .prod_settings import *

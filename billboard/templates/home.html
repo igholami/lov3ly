@@ -5,14 +5,60 @@
 {% block title %}Authenticate{% endblock %}
 
 {% block content %}
-    <div class="my-container">
-        <h2 class="text-center text-white">Home</h2>
+    <div class="my-container" style="min-width: 70%; max-width: 95%;">
         {% if not user.participation or not user.participation.relationship %}
-            <p class="text-center text-white">You are not in a relationship.</p>
+            <p class="text-white">You are not in a relationship.</p>
         {% else %}
-            <p class="text-center text-white">You are in a relationship</p>
+            {% for partner in partners %}
+                <h1 class="text-white">{{ partner.user.first_name }}
+                    {% if not partner.user.profile.online %}
+                        <span class="badge bg-danger text-white">Offline</span>
+                    {% else %}
+                        <span class="badge bg-success text-white" style="font-size: 12px">Online</span>
+                    {% endif %}
+                </h1>
+            {% endfor %}
+            {% if admitted %}
+                <hr>
+                <p class="text-white" style="font-family: sans-serif; font-size: 24px; letter-spacing: 7px; line-height: 1;">In Love for <span id="age">Loading...</span></p>
+            {% endif %}
         {% endif %}
-
-
     </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        const age = document.getElementById('age');
+        const start = new Date('{{ user.participation.relationship.since|date:"c" }}');
+        const wrap_number = ((num) => {
+            return "<span style='font-size: 36px; color: cornflowerblue; letter-spacing: normal;'>" + num + "</span>";
+        });
+        setInterval(() => {
+            const now = new Date();
+            const diff = now - start;
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+            const diff2 = diff % (1000 * 60 * 60 * 24 * 365);
+            const months = Math.floor(diff2 / (1000 * 60 * 60 * 24 * 30));
+            const diff3 = diff2 % (1000 * 60 * 60 * 24 * 30);
+            const days = Math.floor(diff3 / (1000 * 60 * 60 * 24));
+            const diff4 = diff3 % (1000 * 60 * 60 * 24);
+            const hours = Math.floor(diff4 / (1000 * 60 * 60));
+            const diff5 = diff4 % (1000 * 60 * 60);
+            const minutes = Math.floor(diff5 / (1000 * 60));
+            const diff6 = diff5 % (1000 * 60);
+            const seconds = Math.floor(diff6 / 1000);
+            const milliseconds = diff6 % 1000;
+            age.innerHTML = "<br>"
+            if (years > 0) {
+                age.innerHTML += wrap_number(years) + " years<br>";
+            }
+            if (months > 0) {
+                age.innerHTML += wrap_number(months) + " months<br>";
+            }
+            age.innerHTML += wrap_number(days) + " days<br>";
+            age.innerHTML += wrap_number(hours) + " hours<br>";
+            age.innerHTML += wrap_number(minutes) + " minutes<br>";
+            age.innerHTML += wrap_number(seconds) + " seconds.";
+        }, 50);
+    </script>
 {% endblock %}

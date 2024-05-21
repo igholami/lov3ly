@@ -9,13 +9,16 @@ def home(request):
         return redirect('fingerprint')
     user = request.user
     in_relationship = user.participation and user.participation.relationship
-    relationship, partner = None, None
+    relationship, partners = None, None
+    admitted = False
     if in_relationship:
         relationship = user.participation.relationship
-        partner: User = relationship.participants.exclude(pk=user.pk).first()
+        partners = relationship.participants.exclude(pk=user.pk)
+        admitted = all([p.user.profile.online for p in partners])
     return render(request, 'home.html', context={
             'user': request.user,
             'in_relationship': in_relationship,
             'relationship': relationship,
-            'partner': partner,
+            'partners': partners,
+            'admitted': admitted,
         })

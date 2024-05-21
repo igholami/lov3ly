@@ -23,7 +23,7 @@
                 {% for participant in relationship.participants.all %}
                     {% if participant.photo %}
                         <div class="bottom-fixed {% if participant.photo_position == 'left' %}left-fixed{% else %}right-fixed{% endif %}">
-                            <img src="{{ participant.photo.url }}" alt="{{ participant.user.first_name }}" class="img-fluid">
+                            <img src="{{ participant.photo.url }}" alt="{{ participant.user.first_name }}" class="img-fluid" title="{{ participant.user.first_name }}">
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -35,18 +35,20 @@
                         </div>
                         <div class="col-12 col-lg-8">
                             <div style="overflow-y: auto; max-height: 210px;">
-                                <div class="list-group" style="border-radius: 0;">
-                                    <a class="list-group-item item">Item 1</a>
-                                    <a class="list-group-item item">Item 2</a>
-                                    <a class="list-group-item item">Item 3</a>
-                                    <a class="list-group-item item">Item 4</a>
-                                    <a class="list-group-item item">Item 5</a>
-                                    <a class="list-group-item item">Item 6</a>
+                                <div class="list-group" style="border-radius: 0; color: inherit;">
+                                    {% for date in ordered_events %}
+                                        <a class="list-group item" id="{{ date.name }}">
+                                            <span style="font-size: 20px; font-family: 'droid-sans-mono';">
+                                                <strong style="color:cornflowerblue;">{{ date.name }}:</strong> {{ date.date|date:"F j, Y" }}
+                                            </span>
+                                        </a>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <hr style="border-color: #405e55">
             {% endif %}
         {% endif %}
     </div>
@@ -95,6 +97,8 @@
             border: none;
             border-left: 1px solid #405e55;
             color: white;
+            border-radius: 0;
+            padding: 10px;
         }
 
         .item:hover {
@@ -105,15 +109,13 @@
     </style>
     <script>
         const age = document.getElementById('age');
-        const start = new Date('{{ user.participation.relationship.since|date:"c" }}');
+        const start = new Date('{{ since|date:"c" }}');
         const wrap_number = ((num) => {
             return "<span style='font-size: 36px; color: cornflowerblue; letter-spacing: normal;'>" + num + "</span>";
         });
-        setInterval(() => {
-            const now = new Date();
-            const diff = now - start;
-            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
-            const diff2 = diff % (1000 * 60 * 60 * 24 * 365);
+        const diff_to_count = (date_diff, spacing, wrap_number) => {
+            const years = Math.floor(date_diff / (1000 * 60 * 60 * 24 * 365));
+            const diff2 = date_diff % (1000 * 60 * 60 * 24 * 365);
             const months = Math.floor(diff2 / (1000 * 60 * 60 * 24 * 30));
             const diff3 = diff2 % (1000 * 60 * 60 * 24 * 30);
             const days = Math.floor(diff3 / (1000 * 60 * 60 * 24));
@@ -123,18 +125,30 @@
             const minutes = Math.floor(diff5 / (1000 * 60));
             const diff6 = diff5 % (1000 * 60);
             const seconds = Math.floor(diff6 / 1000);
-            const milliseconds = diff6 % 1000;
-            age.innerHTML = "<br>"
+            var resultHTML = "";
             if (years > 0) {
-                age.innerHTML += wrap_number(years) + " years<br>";
+                resultHTML += wrap_number(years) + " years" + spacing;
             }
             if (months > 0) {
-                age.innerHTML += wrap_number(months) + " months<br>";
+                resultHTML += wrap_number(months) + " months" + spacing;
             }
-            age.innerHTML += wrap_number(days) + " days<br>";
-            age.innerHTML += wrap_number(hours) + " hours<br>";
-            age.innerHTML += wrap_number(minutes) + " minutes<br>";
-            age.innerHTML += wrap_number(seconds) + " seconds.";
+            resultHTML += wrap_number(days) + " days" + spacing;
+            resultHTML += wrap_number(hours) + " hours" + spacing;
+            resultHTML += wrap_number(minutes) + " minutes" + spacing;
+            resultHTML += wrap_number(seconds) + " seconds.";
+            return resultHTML;
+        };
+        setInterval(() => {
+            const now = new Date();
+            const diff = now - start;
+            age.innerHTML = "<br>" + diff_to_count(diff, "<br>", wrap_number);
+
+            var element;
+            {% for date in ordered_events %}
+                element = document.getElementById('{{ date.name }}');
+                element.title = diff_to_count(now - new Date('{{ date.date|date:"c" }}'), " ", (num) => {return num});
+            {% endfor %}
         }, 50);
+
     </script>
 {% endblock %}

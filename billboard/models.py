@@ -19,3 +19,13 @@ class Participation(models.Model):
 
     def __str__(self):
         return f"{self.user.username if self.user else 'Nobody'} in ({self.relationship})"
+
+
+class ImportantDate(models.Model):
+    date = models.DateTimeField()
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE, related_name='important_dates')
+
+    def __str__(self):
+        return f"{self.date} - {self.description}"

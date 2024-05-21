@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 class Relationship(models.Model):
     since = models.DateTimeField()
+    oath = models.TextField(null=True, blank=True)
 
     def __str__(self):
         if self.participants.count() == 0:

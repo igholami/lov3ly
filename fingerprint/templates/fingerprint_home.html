@@ -1,0 +1,14 @@
+<!-- templates/register.html -->
+
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="my-center-container">
+        <div class="my-container">
+            <h2>{{ user.email }}</h2>
+            <button class="btn btn-primary" onclick="window.location.href='{% url 'logout' %}'">Logout</button>
+        </div>
+    </div>
+{% endblock %}

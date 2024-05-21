@@ -5,14 +5,16 @@
 {% block title %}Authenticate{% endblock %}
 
 {% block content %}
-    <div class="my-container">
-        <h2 class="text-center text-white">Authenticate</h2>
-        <form method="post" action="{% url 'auth' %}" class="text-center">
-            {% csrf_token %}
-            <div class="form-group">
-                <input type="email" name="email" class="form-control"  placeholder="Enter your email" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+    <div class="my-center-container">
+        <div class="my-container">
+            <h2 class="text-center text-white">Authenticate</h2>
+            <form method="post" action="{% url 'auth' %}" class="text-center">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="email" name="email" class="form-control"  placeholder="Enter your email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

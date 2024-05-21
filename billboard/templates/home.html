@@ -13,7 +13,7 @@
             {% for partner in partners %}
                 <h1 class="text-white">{{ partner.user.first_name }}
                     {% if not partner.user.profile.online %}
-                        <span class="badge bg-danger text-white">Offline</span>
+                        <span class="badge bg-danger text-white" style="font-size: 12px">Offline</span>
                     {% else %}
                         <span class="badge bg-success text-white" style="font-size: 12px">Online</span>
                     {% endif %}
@@ -49,6 +49,20 @@
                     </div>
                 </div>
                 <hr style="border-color: #405e55">
+                {% if relationship.oath %}
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-10 oath-container">
+                                <p class="oath">
+                                    {{ relationship.oath | linebreaksbr }}
+                                </p>
+                                <br>
+                                <p class="oath" style="text-align: right">{{ joint_names }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
             {% endif %}
         {% endif %}
     </div>
@@ -73,9 +87,19 @@
             right: 0;
         }
 
+        .oath {
+            font-family: 'beloved-script';
+            font-size: 48px;
+            width: 100%;
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .bottom-fixed {
                 width: 200px; /* Adjust for smaller screens */
+            }
+            .oath {
+                font-size: 32px;
             }
         }
 

@@ -155,7 +155,7 @@ def complete_login(request):
 def home(request):
     return render(
         request,
-        "home.html",
+        "fingerprint_home.html",
         context={
             "user": request.user
         }

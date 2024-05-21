@@ -2,13 +2,14 @@
 
 {% extends "base.html" %}
 
-{% block title %}Authenticate{% endblock %}
+{% block title %}LOV3LY{% endblock %}
 
 {% block content %}
     <div class="my-container" style="min-width: 70%; max-width: 95%;">
-        {% if not user.participation or not user.participation.relationship %}
+        {% if not in_relationship %}
             <p class="text-white">You are not in a relationship.</p>
         {% else %}
+
             {% for partner in partners %}
                 <h1 class="text-white">{{ partner.user.first_name }}
                     {% if not partner.user.profile.online %}
@@ -19,14 +20,89 @@
                 </h1>
             {% endfor %}
             {% if admitted %}
+                {% for participant in relationship.participants.all %}
+                    {% if participant.photo %}
+                        <div class="bottom-fixed {% if participant.photo_position == 'left' %}left-fixed{% else %}right-fixed{% endif %}">
+                            <img src="{{ participant.photo.url }}" alt="{{ participant.user.first_name }}" class="img-fluid">
+                        </div>
+                    {% endif %}
+                {% endfor %}
                 <hr style="border-color: #405e55">
-                <p class="text-white" style="font-family: sans-serif; font-size: 24px; letter-spacing: 7px; line-height: 1;">In Love for <span id="age">Loading...</span></p>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <p class="text-white" style="font-family: sans-serif; font-size: 24px; letter-spacing: 7px; line-height: 1;">In Love for <span id="age">Loading...</span></p>
+                        </div>
+                        <div class="col-12 col-lg-8">
+                            <div style="overflow-y: auto; max-height: 210px;">
+                                <div class="list-group" style="border-radius: 0;">
+                                    <a class="list-group-item item">Item 1</a>
+                                    <a class="list-group-item item">Item 2</a>
+                                    <a class="list-group-item item">Item 3</a>
+                                    <a class="list-group-item item">Item 4</a>
+                                    <a class="list-group-item item">Item 5</a>
+                                    <a class="list-group-item item">Item 6</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
         {% endif %}
     </div>
 {% endblock %}
 
 {% block js %}
+    <style>
+        .bottom-fixed {
+            position: fixed;
+            bottom: 0;
+            width: 17%; /* Adjust as needed */
+            min-width: 200px;
+            height: auto;
+            z-index: 1000;
+        }
+
+        .left-fixed {
+            left: 0;
+        }
+
+        .right-fixed {
+            right: 0;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-fixed {
+                width: 200px; /* Adjust for smaller screens */
+            }
+        }
+
+        .bottom-fixed img{
+            -webkit-filter: drop-shadow(2px 2px 0 white)
+            drop-shadow(-2px 2px 0 white)
+            drop-shadow(2px -2px 0 white)
+            drop-shadow(-2px -2px 0 white);
+
+            filter: drop-shadow(2px 2px 0 white)
+            drop-shadow(-2px 2px 0 white)
+            drop-shadow(2px -2px 0 white)
+            drop-shadow(-2px -2px 0 white);
+        }
+
+        {# Transparent background no border on hover add border #}
+        .item {
+            background-color: transparent;
+            border: none;
+            border-left: 1px solid #405e55;
+            color: white;
+        }
+
+        .item:hover {
+            background-color: #405e55;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
     <script>
         const age = document.getElementById('age');
         const start = new Date('{{ user.participation.relationship.since|date:"c" }}');

@@ -124,7 +124,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_DIRS = [
-    BASE_DIR / 'fingerprint/static'
+    BASE_DIR / 'fingerprint/static',
+    BASE_DIR / 'billboard/static',
 ]
 
 MEDIA_URL = '/media/'

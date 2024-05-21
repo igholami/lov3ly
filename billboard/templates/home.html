@@ -1,7 +1,7 @@
 <!-- templates/register.html -->
 
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}LOV3LY{% endblock %}
 
 {% block content %}
@@ -130,24 +130,25 @@
             text-decoration: none;
         }
     </style>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="{% static 'moment-precise-range.js' %}"></script>
     <script>
         const age = document.getElementById('age');
         const start = new Date('{{ since|date:"c" }}');
+        const now = new Date();
         const wrap_number = ((num) => {
             return "<span style='font-size: 36px; color: cornflowerblue; letter-spacing: normal;'>" + num + "</span>";
         });
-        const diff_to_count = (date_diff, spacing, wrap_number) => {
-            const years = Math.floor(date_diff / (1000 * 60 * 60 * 24 * 365));
-            const diff2 = date_diff % (1000 * 60 * 60 * 24 * 365);
-            const months = Math.floor(diff2 / (1000 * 60 * 60 * 24 * 30));
-            const diff3 = diff2 % (1000 * 60 * 60 * 24 * 30);
-            const days = Math.floor(diff3 / (1000 * 60 * 60 * 24));
-            const diff4 = diff3 % (1000 * 60 * 60 * 24);
-            const hours = Math.floor(diff4 / (1000 * 60 * 60));
-            const diff5 = diff4 % (1000 * 60 * 60);
-            const minutes = Math.floor(diff5 / (1000 * 60));
-            const diff6 = diff5 % (1000 * 60);
-            const seconds = Math.floor(diff6 / 1000);
+        const diff_to_count = (first_date, second_date, spacing, wrap_number) => {
+            const first = moment(first_date);
+            const second = moment(second_date);
+            const diff = moment.preciseDiff(first, second, true);
+            const years = diff.years;
+            const months = diff.months;
+            const days = diff.days;
+            const hours = diff.hours;
+            const minutes = diff.minutes;
+            const seconds = diff.seconds;
             var resultHTML = "";
             if (years > 0) {
                 resultHTML += wrap_number(years) + " years" + spacing;
@@ -164,14 +165,14 @@
         setInterval(() => {
             const now = new Date();
             const diff = now - start;
-            age.innerHTML = "<br>" + diff_to_count(diff, "<br>", wrap_number);
+            age.innerHTML = "<br>" + diff_to_count(start, now, "<br>", wrap_number);
 
             var element;
             {% for date in ordered_events %}
                 element = document.getElementById('{{ date.name }}');
-                element.title = diff_to_count(now - new Date('{{ date.date|date:"c" }}'), " ", (num) => {return num});
+                element.title = diff_to_count(new Date('{{ date.date|date:"c" }}'), now, " ", (num) => {return num});
             {% endfor %}
-        }, 50);
+        }, 1000);
 
     </script>
 {% endblock %}

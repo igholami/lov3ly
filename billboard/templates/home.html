@@ -9,7 +9,6 @@
         {% if not in_relationship %}
             <p class="text-white">You are not in a relationship.</p>
         {% else %}
-
             {% for partner in partners %}
                 <h1 class="text-white">{{ partner.user.first_name }}
                     {% if not partner.user.profile.online %}

@@ -15,7 +15,7 @@ def home(request):
     admitted = False
     if in_relationship:
         relationship = user.participation.relationship
-        partners = relationship.participants.exclude(pk=user.pk)
+        partners = relationship.participants.exclude(user=user)
         admitted = all([p.user.profile.online for p in partners])
         since = relationship.since
         ordered_events = relationship.important_dates.order_by('date')

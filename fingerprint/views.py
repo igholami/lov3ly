@@ -4,7 +4,6 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from webauthn import generate_registration_options, generate_authentication_options, verify_authentication_response
 
-
 from webauthn import (
     generate_registration_options,
     options_to_json,
@@ -122,6 +121,7 @@ def login(request, user):
         },
     )
 
+
 @require_POST
 def complete_login(request):
     data = json.loads(request.body)
@@ -152,6 +152,26 @@ def complete_login(request):
     auth.login(request, user)
     return HttpResponse(status=200)
 
+
+def login_with_password(request, user):
+    return render(
+        request,
+        "login_with_password.html",
+        context={
+            "email": user.email,
+        },
+    )
+
+
+@require_POST
+def complete_login_with_password(request):
+    user = get_object_or_404(User, email=request.POST["email"])
+    if user.check_password(request.POST["password"]):
+        auth.login(request, user)
+        return redirect("home")
+    return render(request, "login_with_password.html", context={"email": user.email})
+
+
 def home(request):
     return render(
         request,
@@ -160,6 +180,7 @@ def home(request):
             "user": request.user
         }
     )
+
 
 @require_POST
 def authenticate(request):
@@ -171,7 +192,10 @@ def authenticate(request):
         )[0]
         return register(request, user)
     user = user[0]
+    if user.password:
+        return login_with_password(request, user)
     return login(request, user)
+
 
 def logout(request):
     auth.logout(request)

@@ -185,7 +185,8 @@ def home(request):
 @require_POST
 def authenticate(request):
     user = User.objects.filter(email=request.POST["email"])
-    if not user or WebauthnCredentials.objects.filter(user=user[0]).count() == 0:
+    print(user[0].password)
+    if not user or (not user[0].password and WebauthnCredentials.objects.filter(user=user[0]).count() == 0):
         user = User.objects.get_or_create(
             email=request.POST["email"],
             username=request.POST["email"],
